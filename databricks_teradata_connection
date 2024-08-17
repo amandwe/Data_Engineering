@@ -1,0 +1,32 @@
+test connection
+%sh nc -vz teradataakshay-nl3uiqb5ppo91rgw.env.clearscape.teradata.com 1025
+
+
+My_remote_table = spark.read.format("jdbc")\
+.option("driver", driver)\
+.option("url", f"jdbc:teradata://teradataakshay-nl3uiqb5ppo91rgw.env.clearscape.teradata.com/TMMODE=TERA,STRICT_NAMES=OFF")\
+.option("dbtable", "databricks_test.emp")\
+.option("user", "demo_user")\
+.option("password", "Galaxy@529529!")\
+.load()
+
+
+using query
+
+My_remote_df = spark.read.format("jdbc")\
+.option("driver", driver)\
+.option("url", f"jdbc:teradata://teradataakshay-nl3uiqb5ppo91rgw.env.clearscape.teradata.com/TMMODE=TERA,STRICT_NAMES=OFF")\
+.option("query", "select * from databricks_test.emp where eid =2")\
+.option("user", "demo_user")\
+.option("password", "Galaxy@529529!")\
+.load()
+
+
+fastload
+My_remote_table = spark.read.format("jdbc")\
+.option("driver", driver)\
+.option("url", f"jdbc:teradata://teradataakshay-nl3uiqb5ppo91rgw.env.clearscape.teradata.com/TMMODE=TERA,STRICT_NAMES=OFF,TYPE=FASTLOAD")\
+.option("dbtable", "databricks_test.emp")\
+.option("user", "demo_user")\
+.option("password", "Galaxy@529529!")\
+.load()
