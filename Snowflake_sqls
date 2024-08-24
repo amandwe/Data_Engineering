@@ -1,0 +1,140 @@
+
+create schema consumer_db.consumer_scm
+
+create schema consumer
+
+create or replace table consumer(
+cons_id integer autoincrement,cons_name string, cons_mobile integer, cons_city string)
+
+insert into consumer(cons_name,cons_mobile,cons_city)
+values('Akshay M','8655464656','Pune'),
+('Sneha','9022263089','Mumbai'),
+('Deepak','9087654677','Nagpur')
+
+update consumer
+set cons_name = 'Akshay'
+where cons_name = 'Akshay M'
+
+select * from consumer
+
+create or replace table shop_trans
+(
+rec_id integer not null autoincrement,
+cons_id integer,
+shop_id integer,
+prod_id integer,
+prod_qty integer
+)
+
+create or replace table shop_trans as
+select * from shop_trans_bckp
+
+
+ table shop_trans
+
+
+insert into shop_trans(cons_id,shop_id,prod_id,prod_qty)
+values(1,2,1,2)
+
+,(1,1,3,1),(2,1,4,2),(2,2,5,1),(3,2,6,1),(3,2,7,2)
+
+
+select * from product
+
+create or replace table product
+(
+prod_id integer AUTOINCREMENT,
+prod_name string,
+prod_type string,
+prod_price integer,
+prod_company string
+)
+
+insert into product(prod_name,prod_type,prod_price,prod_company)
+values
+('Amul Milk','dairy',27,'Amul'),
+('MP Wheat','Grain',40,'Local'),
+('Closeup','daily',50,'HUL'),
+('Maggi','Food',12,'Nestle'),
+('ToorDal','Grain',110,'Local'),
+('LaysChips','Food',20,'Lays'),
+('Sugar','Food',40,'Local')
+
+select * from shop
+
+create or replace table shop
+(
+shop_id integer autoincrement,
+shop_name string,
+shop_location string,
+shop_city string,
+shop_pin integer
+)
+
+insert into shop(shop_name,shop_location,shop_city,shop_pin)
+values
+('Wakad','Wakad','Pune',411057),
+('Andheri','Andheri','Mumbai',100010)
+
+
+create or replace table shop_trans_detail_final
+(
+rec_id integer not null autoincrement,
+cons_id integer,
+cons_name string,
+shop_id integer,
+shop_name string,
+prod_id integer,
+prod_name string,
+prod_qty integer,
+total_price integer
+)
+
+
+select a.rec_id,a.cons_id,b.cons_name,a.shop_id,c.shop_name,a.prod_id,d.prod_name,a.prod_qty,cast(a.prod_qty*d.prod_price as number) as total_price
+from
+shop_trans a left join consumer b on a.cons_id=b.cons_id
+left join shop c on c.shop_id = a.shop_id
+left join product d on a.prod_id=d.prod_id
+
+select * from shop_trans_dynamic
+
+REC_ID	CONS_ID	CONS_NAME	SHOP_ID	SHOP_NAME	PROD_ID	PROD_NAME	PROD_QTY	TOTAL_PRICE
+1	1	Akshay M	1	Wakad	2	MP Wheat	4	160
+2	1	Akshay M	1	Wakad	3	Closeup	1	50
+3	2	Sneha	1	Wakad	4	Maggi	2	24
+4	2	Sneha	2	Andheri	5	ToorDal	1	110
+5	3	Deepak	2	Andheri	6	LaysChips	1	20
+6	3	Deepak	2	Andheri	7	Sugar	2	80
+
+CREATE OR REPLACE DYNAMIC TABLE shop_trans_dynamic
+TARGET_LAG = '1 minute'
+WAREHOUSE = compute_wh
+AS
+select a.rec_id,a.cons_id,b.cons_name,a.shop_id,c.shop_name,a.prod_id,d.prod_name,a.prod_qty,cast(a.prod_qty*d.prod_price as number) as total_price
+from
+shop_trans a left join consumer b on a.cons_id=b.cons_id
+left join shop c on c.shop_id = a.shop_id
+left join product d on a.prod_id=d.prod_id
+
+
+
+insert into consumer_db.consumer_scm
+values
+(100,'English',83,'26-May-2021'),
+(100,'Hindi',90,'27-May-2021'),
+(100,'Science',90,'28-May-2021'),
+(100,'English',80,'26-Apr-2022'),
+(100,'Hindi',86,'27-Apr-2022'),
+(100,'Science',70,'28-Apr-2022'),
+(200,'English',73,'26-May-2021'),
+(200,'Hindi',84,'27-May-2021'),
+(200,'Science',62,'28-May-2021')
+
+CREATE TASK mytask1
+  WAREHOUSE = mywh
+  SCHEDULE = '5 minute'
+  WHEN
+    SYSTEM$STREAM_HAS_DATA('MYSTREAM')
+  AS
+    INSERT INTO mytable1(id,name) SELECT id, name FROM mystream WHERE METADATA$ACTION = 'INSERT';
