@@ -1,0 +1,83 @@
+
+
+use schema dbt_sf.stage_schema;
+
+desc account;
+
+create table emp
+(
+eid integer,
+ename string,
+edept string,
+salary integer
+)
+
+copy into emp
+from @s3_ext_stage
+file_format = emp_csv_format
+
+ table emp_dedup
+
+grant all privileges on database dbt_sf to role pc_dbt_role
+
+grant all privileges on schema STAGE_SCHEMA to role pc_dbt_role
+
+select * from emp_dedup
+
+
+select * from emp
+
+grant all privileges on all tables in schema dbt_sf.STAGE_SCHEMA to role pc_dbt_role
+
+create table emp_dedup as
+select distinct * from emp
+
+AKIAWX4IYSEVFCMQRM5Q
+
+show stage @s3_ext_stage
+
+select * from @s3_ext_stage/emp1.csv
+
+CREATE OR REPLACE FILE FORMAT emp_csv_format
+  TYPE = CSV
+  FIELD_DELIMITER = ','
+  SKIP_HEADER = 1
+
+create table student(
+studentNo integer,subject string, marks integer,date_of_exam date)
+
+insert into student
+values
+(100,'English',83,'26-May-2021'),
+(100,'Hindi',90,'27-May-2021'),
+(100,'Science',90,'28-May-2021'),
+(100,'English',80,'26-Apr-2022'),
+(100,'Hindi',86,'27-Apr-2022'),
+(100,'Science',70,'28-Apr-2022'),
+(200,'English',73,'26-May-2021'),
+(200,'Hindi',84,'27-May-2021'),
+(200,'Science',62,'28-May-2021')
+
+
+select studentno,subject,marks from student
+qualify row_number() over( order by date_of_exam desc) <3
+
+SELECT first_name, last_name,age,1 as ext
+FROM Customers
+qualify row_number over(partition by ext order by age asc) <3
+
+
+  
+CREATE or replace STAGE s3_ext_stage
+  URL='s3://akshaymsf/emp_dummy_files/'
+
+SELECT first_name, last_name,age,1 as ext
+FROM Customers
+qualify row_number over(partition by ext order by age asc) <3
+  
+  CREDENTIALS=(AWS_KEY_ID='AKIAWX4IYSEVC4UDQSI7' AWS_SECRET_KEY='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');
+
+
+  
+
+  
