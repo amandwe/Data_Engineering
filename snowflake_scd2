@@ -1,0 +1,76 @@
+
+
+
+
+select * from consumer
+
+
+update consumer
+set cons_mobile=9876543210
+where cons_id = 3
+
+
+
+insert into consumer(cons_name,cons_mobile,cons_city)
+values('Nilesh','6789543210','Chennai')
+
+create or replace table consumer(
+cons_id integer autoincrement,
+cons_name string, 
+cons_mobile integer, 
+cons_city string
+)
+
+
+select * from consumer_scd2
+
+create or replace table consumer_scd2(
+cons_id_sr_key integer autoincrement,
+cons_id integer ,
+cons_name string, 
+cons_mobile integer, 
+cons_city string,
+start_dt date,
+end_dt date
+)
+
+select current_date-1
+
+merge into consumer_scd2 trg_scd2
+using
+(
+select src.cons_id as join_key , src.* from consumer src
+union all
+select null as join_key , src.* from 
+consumer src inner join
+consumer_scd2 trg on src.cons_id=trg.cons_id
+where (src.cons_name<>trg.cons_name or src.cons_mobile<>trg.cons_mobile or src.cons_city<>trg.cons_city)
+and trg.end_dt = '9999-12-31'
+) src_main
+on src_main.join_key = trg_scd2.cons_id
+when matched and 
+(src_main.cons_name<>trg_scd2.cons_name or src_main.cons_mobile<>trg_scd2.cons_mobile or src_main.cons_city<>trg_scd2.cons_city)
+then update set trg_scd2.end_dt = current_date -1 
+when not matched then insert
+(
+cons_id,
+cons_name,
+cons_mobile,
+cons_city,
+start_dt,
+end_dt
+) values
+(
+src_main.cons_id,
+src_main.cons_name,
+src_main.cons_mobile,
+src_main.cons_city,
+current_date,
+cast('9999-12-31' as date)
+)
+
+
+
+
+
+
