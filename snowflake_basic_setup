@@ -32,7 +32,7 @@ grant all privileges on all tables in schema dbt_sf.STAGE_SCHEMA to role pc_dbt_
 create table emp_dedup as
 select distinct * from emp
 
-AKIAWX4IYSEVFCMQRM5Q
+
 
 show stage @s3_ext_stage
 
@@ -75,7 +75,23 @@ SELECT first_name, last_name,age,1 as ext
 FROM Customers
 qualify row_number over(partition by ext order by age asc) <3
   
-  CREDENTIALS=(AWS_KEY_ID='AKIAWX4IYSEVC4UDQSI7' AWS_SECRET_KEY='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');
+  CREDENTIALS=(AWS
+
+_KEY
+
+_ID='AKIAW
+
+X4IYSEVC4UDQSI7' AWS
+
+_SECRET
+
+_KEY='Ihf32YNR/o1SemhyxCxsHCI
+
+
+eOIr01DY6WI
+
+
+JXFfjj');
 
 
   
